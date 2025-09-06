@@ -1,0 +1,44 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: api-gateway
+#  security:
+#      oauth2:
+#        resourceserver:
+#          jwt:
+#            secret: mySecretKey
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: project-service
+          uri: lb://project-service
+          predicates:
+            - Path=/project-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: task-service
+          uri: lb://task-service
+          predicates:
+            - Path=/task-service/**
+          filters:
+            - StripPrefix=1
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
